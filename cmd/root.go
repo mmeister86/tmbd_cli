@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"tmdb-cli/internal/config"
 	"tmdb-cli/internal/tmdb"
 
 	"github.com/spf13/cobra"
@@ -51,12 +52,21 @@ func init() {
 	// Subcommands hinzufügen
 	rootCmd.AddCommand(movieCmd)
 	rootCmd.AddCommand(seriesCmd)
+	rootCmd.AddCommand(languageCmd)
 }
 
 // getLanguage gibt die zu verwendende Sprache zurück
+// Priorität: Flag -> Config -> Environment -> Default
 func getLanguage() string {
 	if language != "" {
 		return language
 	}
+
+	// Aus Konfiguration laden
+	cfg, err := config.Load()
+	if err == nil && cfg.Language != "" {
+		return cfg.Language
+	}
+
 	return tmdb.GetLanguage()
 }

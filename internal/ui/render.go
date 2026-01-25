@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"tmdb-cli/internal/i18n"
 	"tmdb-cli/internal/tmdb"
 
 	"github.com/charmbracelet/lipgloss"
@@ -61,22 +62,23 @@ var (
 )
 
 // RenderMovieDetails rendert die Filmdetails
-func RenderMovieDetails(movie *tmdb.MovieDetails, short bool) string {
+func RenderMovieDetails(movie *tmdb.MovieDetails, short bool, language string) string {
 	if short {
-		return renderMovieShort(movie)
+		return renderMovieShort(movie, language)
 	}
-	return renderMovieFull(movie)
+	return renderMovieFull(movie, language)
 }
 
-func renderMovieFull(movie *tmdb.MovieDetails) string {
+func renderMovieFull(movie *tmdb.MovieDetails, language string) string {
 	var sb strings.Builder
 
 	// Titel
+	movieIcon := i18n.Translate(i18n.KeyMovieIcon, language)
 	year := extractYear(movie.ReleaseDate)
 	if movie.Title != movie.OriginalTitle {
-		sb.WriteString(titleStyle.Render(fmt.Sprintf("🎬 %s (%s)", movie.Title, movie.OriginalTitle)))
+		sb.WriteString(titleStyle.Render(fmt.Sprintf("%s %s (%s)", movieIcon, movie.Title, movie.OriginalTitle)))
 	} else {
-		sb.WriteString(titleStyle.Render(fmt.Sprintf("🎬 %s", movie.Title)))
+		sb.WriteString(titleStyle.Render(fmt.Sprintf("%s %s", movieIcon, movie.Title)))
 	}
 	sb.WriteString("\n")
 
@@ -88,26 +90,26 @@ func renderMovieFull(movie *tmdb.MovieDetails) string {
 	sb.WriteString("\n")
 
 	// Details
-	sb.WriteString(renderRow("Jahr", year))
-	sb.WriteString(renderRow("Laufzeit", fmt.Sprintf("%d Min.", movie.Runtime)))
-	sb.WriteString(renderRow("Genre", formatGenres(movie.Genres)))
-	sb.WriteString(renderRow("Bewertung", formatRating(movie.VoteAverage, movie.VoteCount)))
-	sb.WriteString(renderRow("Status", movie.Status))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelYear, language), year))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelRuntime, language), fmt.Sprintf("%d Min.", movie.Runtime)))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelGenre, language), formatGenres(movie.Genres)))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelRating, language), formatRating(movie.VoteAverage, movie.VoteCount)))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelStatus, language), movie.Status))
 	sb.WriteString("\n")
 
 	// Regie
 	directors := getDirectors(movie.Credits)
 	if len(directors) > 0 {
-		sb.WriteString(renderRow("Regie", strings.Join(directors, ", ")))
+		sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelDirector, language), strings.Join(directors, ", ")))
 		sb.WriteString("\n")
 	}
 
 	// Budget & Revenue
 	if movie.Budget > 0 {
-		sb.WriteString(renderRow("Budget", formatMoney(movie.Budget)))
+		sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelBudget, language), formatMoney(movie.Budget)))
 	}
 	if movie.Revenue > 0 {
-		sb.WriteString(renderRow("Einspielergebnis", formatMoney(movie.Revenue)))
+		sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelRevenue, language), formatMoney(movie.Revenue)))
 	}
 	if movie.Budget > 0 || movie.Revenue > 0 {
 		sb.WriteString("\n")
@@ -115,14 +117,14 @@ func renderMovieFull(movie *tmdb.MovieDetails) string {
 
 	// Handlung
 	if movie.Overview != "" {
-		sb.WriteString(renderSection("Handlung"))
+		sb.WriteString(renderSection(i18n.Translate(i18n.KeySectionPlot, language)))
 		sb.WriteString(wrapText(movie.Overview, 60))
 		sb.WriteString("\n\n")
 	}
 
 	// Besetzung
 	if movie.Credits != nil && len(movie.Credits.Cast) > 0 {
-		sb.WriteString(renderSection("Besetzung"))
+		sb.WriteString(renderSection(i18n.Translate(i18n.KeySectionCast, language)))
 		for i, cast := range movie.Credits.Cast {
 			if i >= 5 {
 				sb.WriteString(lipgloss.NewStyle().Foreground(mutedColor).Render("..."))
@@ -136,18 +138,19 @@ func renderMovieFull(movie *tmdb.MovieDetails) string {
 
 	// Links
 	if movie.ImdbID != "" {
-		sb.WriteString(renderSection("Links"))
+		sb.WriteString(renderSection(i18n.Translate(i18n.KeySectionLinks, language)))
 		sb.WriteString(fmt.Sprintf("IMDb: https://www.imdb.com/title/%s\n", movie.ImdbID))
 	}
 
 	return boxStyle.Render(strings.TrimRight(sb.String(), "\n"))
 }
 
-func renderMovieShort(movie *tmdb.MovieDetails) string {
+func renderMovieShort(movie *tmdb.MovieDetails, language string) string {
 	var sb strings.Builder
 
+	movieIcon := i18n.Translate(i18n.KeyMovieIcon, language)
 	year := extractYear(movie.ReleaseDate)
-	sb.WriteString(titleStyle.Render(fmt.Sprintf("🎬 %s (%s)", movie.Title, year)))
+	sb.WriteString(titleStyle.Render(fmt.Sprintf("%s %s (%s)", movieIcon, movie.Title, year)))
 	sb.WriteString("\n")
 
 	// Rating, Laufzeit, Genre in einer Zeile
@@ -168,18 +171,19 @@ func renderMovieShort(movie *tmdb.MovieDetails) string {
 }
 
 // RenderTVDetails rendert die Seriendetails
-func RenderTVDetails(tv *tmdb.TVDetails, short bool) string {
+func RenderTVDetails(tv *tmdb.TVDetails, short bool, language string) string {
 	if short {
-		return renderTVShort(tv)
+		return renderTVShort(tv, language)
 	}
-	return renderTVFull(tv)
+	return renderTVFull(tv, language)
 }
 
-func renderTVFull(tv *tmdb.TVDetails) string {
+func renderTVFull(tv *tmdb.TVDetails, language string) string {
 	var sb strings.Builder
 
 	// Titel
-	sb.WriteString(titleStyle.Render(fmt.Sprintf("📺 %s", tv.Name)))
+	tvIcon := i18n.Translate(i18n.KeySeriesIcon, language)
+	sb.WriteString(titleStyle.Render(fmt.Sprintf("%s %s", tvIcon, tv.Name)))
 	sb.WriteString("\n")
 
 	// Tagline
@@ -196,21 +200,21 @@ func renderTVFull(tv *tmdb.TVDetails) string {
 	if lastYear != "" && lastYear != firstYear {
 		timeRange = fmt.Sprintf("%s - %s", firstYear, lastYear)
 	}
-	sb.WriteString(renderRow("Zeitraum", timeRange))
-	sb.WriteString(renderRow("Staffeln", fmt.Sprintf("%d", tv.NumberOfSeasons)))
-	sb.WriteString(renderRow("Episoden", fmt.Sprintf("%d", tv.NumberOfEpisodes)))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelPeriod, language), timeRange))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelSeasons, language), fmt.Sprintf("%d", tv.NumberOfSeasons)))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelEpisodes, language), fmt.Sprintf("%d", tv.NumberOfEpisodes)))
 	if len(tv.EpisodeRunTime) > 0 {
-		sb.WriteString(renderRow("Episodenlänge", fmt.Sprintf("~%d Min.", tv.EpisodeRunTime[0])))
+		sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelEpisodeLength, language), fmt.Sprintf("~%d Min.", tv.EpisodeRunTime[0])))
 	}
-	sb.WriteString(renderRow("Genre", formatGenres(tv.Genres)))
-	sb.WriteString(renderRow("Bewertung", formatRating(tv.VoteAverage, tv.VoteCount)))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelGenre, language), formatGenres(tv.Genres)))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelRating, language), formatRating(tv.VoteAverage, tv.VoteCount)))
 
 	// Status mit Icon
 	statusIcon := "○"
 	if tv.InProduction {
 		statusIcon = "●"
 	}
-	sb.WriteString(renderRow("Status", fmt.Sprintf("%s %s", statusIcon, tv.Status)))
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelStatus, language), fmt.Sprintf("%s %s", statusIcon, tv.Status)))
 
 	// Network
 	if len(tv.Networks) > 0 {
@@ -218,7 +222,7 @@ func renderTVFull(tv *tmdb.TVDetails) string {
 		for i, n := range tv.Networks {
 			networks[i] = n.Name
 		}
-		sb.WriteString(renderRow("Sender", strings.Join(networks, ", ")))
+		sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelNetwork, language), strings.Join(networks, ", ")))
 	}
 	sb.WriteString("\n")
 
@@ -228,20 +232,20 @@ func renderTVFull(tv *tmdb.TVDetails) string {
 		for i, c := range tv.CreatedBy {
 			creators[i] = c.Name
 		}
-		sb.WriteString(renderRow("Erstellt von", strings.Join(creators, ", ")))
+		sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelCreatedBy, language), strings.Join(creators, ", ")))
 		sb.WriteString("\n")
 	}
 
 	// Handlung
 	if tv.Overview != "" {
-		sb.WriteString(renderSection("Handlung"))
+		sb.WriteString(renderSection(i18n.Translate(i18n.KeySectionPlot, language)))
 		sb.WriteString(wrapText(tv.Overview, 60))
 		sb.WriteString("\n\n")
 	}
 
 	// Besetzung
 	if tv.Credits != nil && len(tv.Credits.Cast) > 0 {
-		sb.WriteString(renderSection("Besetzung"))
+		sb.WriteString(renderSection(i18n.Translate(i18n.KeySectionCast, language)))
 		for i, cast := range tv.Credits.Cast {
 			if i >= 5 {
 				sb.WriteString(lipgloss.NewStyle().Foreground(mutedColor).Render("..."))
@@ -255,7 +259,7 @@ func renderTVFull(tv *tmdb.TVDetails) string {
 
 	// Staffeln
 	if len(tv.Seasons) > 0 {
-		sb.WriteString(renderSection("Staffeln"))
+		sb.WriteString(renderSection(i18n.Translate(i18n.KeySectionSeasons, language)))
 		for _, season := range tv.Seasons {
 			if season.SeasonNumber == 0 {
 				continue // Specials überspringen
@@ -269,11 +273,12 @@ func renderTVFull(tv *tmdb.TVDetails) string {
 	return boxStyle.Render(strings.TrimRight(sb.String(), "\n"))
 }
 
-func renderTVShort(tv *tmdb.TVDetails) string {
+func renderTVShort(tv *tmdb.TVDetails, language string) string {
 	var sb strings.Builder
 
+	tvIcon := i18n.Translate(i18n.KeySeriesIcon, language)
 	firstYear := extractYear(tv.FirstAirDate)
-	sb.WriteString(titleStyle.Render(fmt.Sprintf("📺 %s (%s)", tv.Name, firstYear)))
+	sb.WriteString(titleStyle.Render(fmt.Sprintf("%s %s (%s)", tvIcon, tv.Name, firstYear)))
 	sb.WriteString("\n")
 
 	// Rating, Staffeln, Genre in einer Zeile
@@ -360,7 +365,7 @@ func RenderTVJSON(tv *tmdb.TVDetails) (string, error) {
 }
 
 // RenderError rendert eine Fehlermeldung
-func RenderError(title, message string, hints []string) string {
+func RenderError(title, message string, hints []string, language string) string {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("❌ %s\n\n", title))
 	sb.WriteString(message)

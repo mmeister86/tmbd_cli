@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"tmdb-cli/internal/i18n"
 	"tmdb-cli/internal/tmdb"
 	"tmdb-cli/internal/ui"
 
@@ -35,14 +36,14 @@ func runMovie(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		if errors.Is(err, tmdb.ErrNoAPIKey) {
 			fmt.Println(ui.RenderError(
-				"Fehler: TMDB_API_KEY nicht gesetzt",
-				"Setze deinen API Key mit:",
+				i18n.Translate(i18n.KeyErrorNoAPIKey, lang),
+				i18n.Translate(i18n.KeyErrorSetAPIKey, lang),
 				[]string{
 					"  export TMDB_API_KEY='dein-api-key'",
 					"",
-					"API Key erhältst du unter:",
-					"  https://www.themoviedb.org/settings/api",
+					i18n.Translate(i18n.KeyGetAPIKeyURL, lang),
 				},
+				lang,
 			))
 			return nil
 		}
@@ -57,7 +58,7 @@ func runMovie(cmd *cobra.Command, args []string) error {
 
 	// Keine Ergebnisse
 	if len(results) == 0 {
-		fmt.Println(ui.RenderInfo(fmt.Sprintf("Keine Filme gefunden für: %s", query)))
+		fmt.Println(ui.RenderInfo(i18n.Translatef(i18n.KeyNoMoviesFound, lang, query)))
 		return nil
 	}
 
@@ -67,7 +68,7 @@ func runMovie(cmd *cobra.Command, args []string) error {
 		movieID = results[0].ID
 	} else {
 		// Interaktive Auswahl
-		selectedID, err := ui.SelectMovie(results)
+		selectedID, err := ui.SelectMovie(results, lang)
 		if err != nil {
 			return fmt.Errorf("Auswahl fehlgeschlagen: %w", err)
 		}
@@ -92,7 +93,7 @@ func runMovie(cmd *cobra.Command, args []string) error {
 		}
 		fmt.Println(output)
 	} else {
-		fmt.Println(ui.RenderMovieDetails(movie, shortOutput))
+		fmt.Println(ui.RenderMovieDetails(movie, shortOutput, lang))
 	}
 
 	return nil

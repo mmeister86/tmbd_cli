@@ -75,6 +75,16 @@ tmdb m "Inception"
 tmdb film "Pulp Fiction"
 ```
 
+### Sprache konfigurieren
+
+```bash
+# Sprachauswahlliste anzeigen
+tmdb language
+
+# Sprache für einzelne Anfrage überschreiben
+tmdb movie "The Matrix" --language en-US
+```
+
 ### Serien suchen
 
 ```bash
@@ -94,6 +104,34 @@ tmdb show "Stranger Things"
 | `--short` | `-s` | Kompakte Ausgabe |
 | `--language` | `-l` | Sprache überschreiben (z.B. `en-US`) |
 
+### Sprache konfigurieren
+
+Die Standard-Sprache ist Deutsch (`de-DE`). Du kannst die Sprache dauerhaft ändern:
+
+```bash
+# Interaktive Sprachauswahl
+tmdb language
+```
+
+Unterstützte Sprachen:
+- Deutsch (de-DE)
+- Englisch (en-US)
+- Französisch (fr-FR)
+- Spanisch (es-ES)
+- Italienisch (it-IT)
+
+Alternativ kannst du die Sprache für einzelne Anfragen überschreiben:
+
+```bash
+# Englische Ergebnisse
+tmdb movie "The Matrix" --language en-US
+
+# Französische Ergebnisse
+tmdb series "Les Misérables" --language fr-FR
+```
+
+Die Sprachauswahl wird in `~/.tmdb/config.json` gespeichert.
+
 ### Beispiele
 
 ```bash
@@ -112,10 +150,18 @@ tmdb series "Game of Thrones" --language en-US
 
 ## Konfiguration
 
+Die Konfiguration wird in `~/.tmdb/config.json` gespeichert.
+
 | Umgebungsvariable | Beschreibung | Standard |
 |-------------------|--------------|----------|
 | `TMDB_API_KEY` | TMDB API Key (v3 auth) | *Pflicht* |
-| `TMDB_LANGUAGE` | Sprache für Ergebnisse | `de-DE` |
+| `TMDB_LANGUAGE` | Sprache für Ergebnisse (wenn keine Config vorhanden) | `de-DE` |
+
+**Sprachpriorität:**
+1. `--language` Flag (einzelne Anfrage)
+2. Config-Datei (`~/.tmdb/config.json`)
+3. Umgebungsvariable (`TMDB_LANGUAGE`)
+4. Standard (`de-DE`)
 
 ## Entwicklung
 

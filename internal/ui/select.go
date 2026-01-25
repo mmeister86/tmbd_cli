@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 
+	"tmdb-cli/internal/i18n"
 	"tmdb-cli/internal/tmdb"
 
 	"github.com/charmbracelet/bubbles/key"
@@ -130,7 +131,7 @@ func (m selectModel) View() string {
 }
 
 // SelectMovie zeigt eine interaktive Auswahl für Filme
-func SelectMovie(results []tmdb.MovieSearchResult) (int, error) {
+func SelectMovie(results []tmdb.MovieSearchResult, language string) (int, error) {
 	items := make([]list.Item, len(results))
 	for i, r := range results {
 		year := ""
@@ -146,11 +147,11 @@ func SelectMovie(results []tmdb.MovieSearchResult) (int, error) {
 		}
 	}
 
-	return runSelect(items, "🎬 Wähle einen Film")
+	return runSelect(items, i18n.Translate(i18n.KeySelectMovie, language))
 }
 
 // SelectTV zeigt eine interaktive Auswahl für Serien
-func SelectTV(results []tmdb.TVSearchResult) (int, error) {
+func SelectTV(results []tmdb.TVSearchResult, language string) (int, error) {
 	items := make([]list.Item, len(results))
 	for i, r := range results {
 		year := ""
@@ -166,7 +167,7 @@ func SelectTV(results []tmdb.TVSearchResult) (int, error) {
 		}
 	}
 
-	return runSelect(items, "📺 Wähle eine Serie")
+	return runSelect(items, i18n.Translate(i18n.KeySelectSeries, language))
 }
 
 func runSelect(items []list.Item, title string) (int, error) {
@@ -176,6 +177,62 @@ func runSelect(items []list.Item, title string) (int, error) {
 	l.Title = title
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(true)
+	l.Styles.Title = lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("#E50914")).
+		MarginLeft(2)
+	l.Styles.PaginationStyle = paginationStyle
+	l.Styles.HelpStyle = helpStyle
+
+	// Hilfstext anpassen
+	l.KeyMap.Quit.SetKeys("q", "esc")
+	l.AdditionalShortHelpKeys = func() []key.Binding {
+		return []key.Binding{
+			key.NewBinding(
+				key.WithKeys("enter"),
+				key.WithHelp("enter", "select"),
+			),
+		}
+	}
+
+	m := selectModel{list: l}
+	p := tea.NewProgram(m, tea.WithAltScreen())
+
+	finalModel, err := p.Run()
+	if err != nil {
+		return -1, err
+	}
+
+	result := finalModel.(selectModel)
+	if result.choice == -1 {
+		return -1, nil // Abgebrochen
+	}
+
+	return result.choice, nil
+}
+
+// SelectLanguage zeigt eine interaktive Auswahl für Sprachen
+func SelectLanguage() (string, error) {
+	languages := i18n.SupportedLanguages()
+	items := make([]list.Item, len(languages))
+
+	for i, lang := range languages {
+		langName := i18n.GetLanguageName(lang)
+		items[i] = searchItem{
+			id:       i,
+			title:    langName,
+			year:     lang,
+			rating:   0,
+			overview: "",
+		}
+	}
+
+	delegate := itemDelegate{}
+
+	l := list.New(items, delegate, 40, 10)
+	l.Title = "🌍 Wähle eine Sprache"
+	l.SetShowStatusBar(false)
+	l.SetFilteringEnabled(false)
 	l.Styles.Title = lipgloss.NewStyle().
 		Bold(true).
 		Foreground(lipgloss.Color("#E50914")).
@@ -199,13 +256,18 @@ func runSelect(items []list.Item, title string) (int, error) {
 
 	finalModel, err := p.Run()
 	if err != nil {
-		return -1, err
+		return "", err
 	}
 
 	result := finalModel.(selectModel)
 	if result.choice == -1 {
-		return -1, nil // Abgebrochen
+		return "", nil // Abgebrochen
 	}
 
-	return result.choice, nil
+	// Sprache anhand des Index zurückgeben
+	if result.choice >= 0 && result.choice < len(languages) {
+		return languages[result.choice], nil
+	}
+
+	return "", nil
 }

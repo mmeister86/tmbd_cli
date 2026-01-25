@@ -89,6 +89,38 @@ tmdb [command]
 
 ---
 
+#### 3.1.1.1 Language Command
+```bash
+tmdb language
+```
+
+**Beschreibung:** Zeigt die aktuelle Sprache an oder ermöglicht die interaktive Auswahl einer neuen Sprache.
+
+**Unterstützte Sprachen:**
+- Deutsch (de-DE)
+- Englisch (en-US)
+- Französisch (fr-FR)
+- Spanisch (es-ES)
+- Italienisch (it-IT)
+
+**Beispiel:**
+```bash
+$ tmdb language
+Aktuelle Sprache: Deutsch (de-DE)
+
+🌍 Wähle eine Sprache
+
+  > Deutsch
+    English
+    Français
+    Español
+    Italiano
+
+✓ Sprache auf English (en-US) geändert
+```
+
+---
+
 #### 3.1.2 Movie Command
 ```bash
 tmdb movie <suchbegriff> [flags]
@@ -443,7 +475,22 @@ type Season struct {
 
 ## 6. UI/UX Design
 
-### 6.1 Farbschema
+### 6.1 Mehrsprachigkeit
+
+Das Tool unterstützt 5 Sprachen:
+- Deutsch (de-DE) - Standard
+- Englisch (en-US)
+- Französisch (fr-FR)
+- Spanisch (es-ES)
+- Italienisch (it-IT)
+
+Sprachpriorität:
+1. `--language` Flag (einzelne Anfrage)
+2. Konfigurationsdatei (`~/.tmdb/config.json`)
+3. Umgebungsvariable (`TMDB_LANGUAGE`)
+4. Standard (`de-DE`)
+
+### 6.2 Farbschema
 
 | Element | Farbe | Hex Code |
 |---------|-------|----------|
