@@ -561,7 +561,7 @@ test:
 
 **Via Go:**
 ```bash
-go install github.com/mmeister86/tmdb-cli@latest
+go install github.com/mmeister86/tmbd_cli@latest
 ```
 
 **Via Homebrew (macOS):**
@@ -573,7 +573,7 @@ brew install tmdb-cli
 **Manuell:**
 ```bash
 # Binary herunterladen
-curl -L https://github.com/mmeister86/tmdb-cli/releases/latest/download/tmdb-linux-amd64 -o tmdb
+curl -L https://github.com/mmeister86/tmbd_cli/releases/latest/download/tmdb-linux-amd64 -o tmdb
 chmod +x tmdb
 sudo mv tmdb /usr/local/bin/
 ```

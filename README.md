@@ -21,21 +21,21 @@ Ein plattformübergreifendes Command-Line Tool zum Abrufen von Film- und Serieni
 ### Via Go
 
 ```bash
-go install github.com/mmeister86/tmdb-cli@latest
+go install github.com/mmeister86/tmbd_cli@latest
 ```
 
 ### Manuell bauen
 
 ```bash
-git clone https://github.com/mmeister86/tmdb-cli.git
-cd tmdb-cli
+git clone https://github.com/mmeister86/tmbd_cli.git
+cd tmbd_cli
 make build
 make install
 ```
 
 ### Binaries herunterladen
 
-Vorkompilierte Binaries für verschiedene Plattformen findest du unter [Releases](https://github.com/mmeister86/tmdb-cli/releases).
+Vorkompilierte Binaries für verschiedene Plattformen findest du unter [Releases](https://github.com/mmeister86/tmbd_cli/releases).
 
 ## API Key einrichten
 

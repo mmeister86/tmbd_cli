@@ -1,4 +1,4 @@
-module tmdb-cli
+module github.com/mmeister86/tmbd_cli
 
 go 1.24.0
 

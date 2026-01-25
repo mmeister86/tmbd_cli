@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"os"
 
-	"tmdb-cli/internal/config"
-	"tmdb-cli/internal/tmdb"
+	"github.com/mmeister86/tmbd_cli/internal/config"
+	"github.com/mmeister86/tmbd_cli/internal/tmdb"
 
 	"github.com/spf13/cobra"
 )
 
 // Version wird beim Build gesetzt
-var Version = "1.0.0"
+var Version = "1.0.2"
 
 // Globale Flags
 var (

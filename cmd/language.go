@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"tmdb-cli/internal/config"
-	"tmdb-cli/internal/i18n"
-	"tmdb-cli/internal/ui"
+	"github.com/mmeister86/tmbd_cli/internal/config"
+	"github.com/mmeister86/tmbd_cli/internal/i18n"
+	"github.com/mmeister86/tmbd_cli/internal/ui"
 
 	"github.com/spf13/cobra"
 )

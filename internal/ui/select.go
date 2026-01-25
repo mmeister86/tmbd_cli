@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io"
 
-	"tmdb-cli/internal/i18n"
-	"tmdb-cli/internal/tmdb"
+	"github.com/mmeister86/tmbd_cli/internal/i18n"
+	"github.com/mmeister86/tmbd_cli/internal/tmdb"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"

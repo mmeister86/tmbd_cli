@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"tmdb-cli/internal/i18n"
-	"tmdb-cli/internal/tmdb"
-	"tmdb-cli/internal/ui"
+	"github.com/mmeister86/tmbd_cli/internal/i18n"
+	"github.com/mmeister86/tmbd_cli/internal/tmdb"
+	"github.com/mmeister86/tmbd_cli/internal/ui"
 
 	"github.com/spf13/cobra"
 )
