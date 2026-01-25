@@ -162,3 +162,58 @@ func (c *Client) GetTVDetails(id int, language string) (*TVDetails, error) {
 
 	return &tv, nil
 }
+
+// SearchPeople sucht nach Personen
+func (c *Client) SearchPeople(query string, language string) ([]PersonSearchResult, error) {
+	endpoint := fmt.Sprintf("%s/search/person", baseURL)
+
+	params := url.Values{}
+	params.Set("api_key", c.apiKey)
+	params.Set("language", language)
+	params.Set("query", query)
+	params.Set("include_adult", "false")
+
+	resp, err := c.httpClient.Get(fmt.Sprintf("%s?%s", endpoint, params.Encode()))
+	if err != nil {
+		return nil, fmt.Errorf("API-Anfrage fehlgeschlagen: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("%w: Status %d", ErrAPIError, resp.StatusCode)
+	}
+
+	var result SearchResponse[PersonSearchResult]
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("JSON-Dekodierung fehlgeschlagen: %w", err)
+	}
+
+	return result.Results, nil
+}
+
+// GetPersonDetails lädt die Details zu einer Person
+func (c *Client) GetPersonDetails(id int, language string) (*PersonDetails, error) {
+	endpoint := fmt.Sprintf("%s/person/%d", baseURL, id)
+
+	params := url.Values{}
+	params.Set("api_key", c.apiKey)
+	params.Set("language", language)
+	params.Set("append_to_response", "combined_credits")
+
+	resp, err := c.httpClient.Get(fmt.Sprintf("%s?%s", endpoint, params.Encode()))
+	if err != nil {
+		return nil, fmt.Errorf("API-Anfrage fehlgeschlagen: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("%w: Status %d", ErrAPIError, resp.StatusCode)
+	}
+
+	var person PersonDetails
+	if err := json.NewDecoder(resp.Body).Decode(&person); err != nil {
+		return nil, fmt.Errorf("JSON-Dekodierung fehlgeschlagen: %w", err)
+	}
+
+	return &person, nil
+}

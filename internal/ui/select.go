@@ -170,6 +170,32 @@ func SelectTV(results []tmdb.TVSearchResult, language string) (int, error) {
 	return runSelect(items, i18n.Translate(i18n.KeySelectSeries, language))
 }
 
+// SelectPerson zeigt eine interaktive Auswahl für Personen
+func SelectPerson(results []tmdb.PersonSearchResult, language string) (int, error) {
+	items := make([]list.Item, len(results))
+	for i, r := range results {
+		// Für Personen: Name + bekannt für
+		knownFor := ""
+		if len(r.KnownFor) > 0 {
+			work := r.KnownFor[0]
+			if work.Title != "" {
+				knownFor = work.Title
+			} else if work.Name != "" {
+				knownFor = work.Name
+			}
+		}
+		items[i] = searchItem{
+			id:       r.ID,
+			title:    r.Name,
+			year:     knownFor, // year-Feld für "bekannt für"
+			rating:   r.Popularity,
+			overview: "",
+		}
+	}
+
+	return runSelect(items, i18n.Translate(i18n.KeySelectPerson, language))
+}
+
 func runSelect(items []list.Item, title string) (int, error) {
 	delegate := itemDelegate{}
 

@@ -30,11 +30,21 @@ const (
 	KeyNoSeriesFound      = "no_series_found"
 	KeySelectMovie        = "select_movie"
 	KeySelectSeries       = "select_series"
+	KeySelectPerson       = "select_person"
 	KeySelectAction       = "select_action"
 	KeyCancelAction      = "cancel_action"
 	KeyErrorNoAPIKey     = "error_no_api_key"
 	KeyErrorSetAPIKey    = "error_set_api_key"
 	KeyGetAPIKeyURL      = "get_api_key_url"
+	KeyPersonIcon        = "person_icon"
+	KeyLabelBirthday     = "label_birthday"
+	KeyLabelDeathday     = "label_deathday"
+	KeyLabelPlaceOfBirth = "label_place_of_birth"
+	KeyLabelPlaceOfDeath = "label_place_of_death"
+	KeyLabelKnownFor     = "label_known_for"
+	KeyLabelDepartment   = "label_department"
+	KeySectionKnownFor   = "section_known_for"
+	KeyNoPersonsFound   = "no_persons_found"
 )
 
 // translations enthält alle Übersetzungen pro Sprache
@@ -42,6 +52,7 @@ var translations = map[string]map[string]string{
 	"de-DE": {
 		KeyMovieIcon:          "🎬",
 		KeySeriesIcon:         "📺",
+		KeyPersonIcon:         "👤",
 		KeyLabelYear:          "Jahr",
 		KeyLabelRuntime:       "Laufzeit",
 		KeyLabelGenre:         "Genre",
@@ -56,14 +67,23 @@ var translations = map[string]map[string]string{
 		KeyLabelEpisodeLength: "Episodenlänge",
 		KeyLabelNetwork:       "Sender",
 		KeyLabelCreatedBy:     "Erstellt von",
+		KeyLabelBirthday:      "Geburtsdatum",
+		KeyLabelDeathday:      "Sterbedatum",
+		KeyLabelPlaceOfBirth:  "Geburtsort",
+		KeyLabelPlaceOfDeath:  "Sterbeort",
+		KeyLabelKnownFor:      "Bekannt für",
+		KeyLabelDepartment:    "Beruf",
 		KeySectionPlot:        "Handlung",
 		KeySectionCast:        "Besetzung",
 		KeySectionSeasons:      "Staffeln",
 		KeySectionLinks:       "Links",
+		KeySectionKnownFor:    "Bekannte Rollen",
 		KeyNoMoviesFound:      "Keine Filme gefunden für: %s",
 		KeyNoSeriesFound:      "Keine Serien gefunden für: %s",
+		KeyNoPersonsFound:     "Keine Personen gefunden für: %s",
 		KeySelectMovie:        "Wähle einen Film",
 		KeySelectSeries:       "Wähle eine Serie",
+		KeySelectPerson:       "Wähle eine Person",
 		KeySelectAction:       "auswählen",
 		KeyCancelAction:       "abbrechen",
 		KeyErrorNoAPIKey:     "Fehler: TMDB_API_KEY nicht gesetzt",
@@ -73,6 +93,7 @@ var translations = map[string]map[string]string{
 	"en-US": {
 		KeyMovieIcon:          "🎬",
 		KeySeriesIcon:         "📺",
+		KeyPersonIcon:         "👤",
 		KeyLabelYear:          "Year",
 		KeyLabelRuntime:       "Runtime",
 		KeyLabelGenre:         "Genre",
@@ -87,14 +108,23 @@ var translations = map[string]map[string]string{
 		KeyLabelEpisodeLength: "Episode Length",
 		KeyLabelNetwork:       "Network",
 		KeyLabelCreatedBy:     "Created by",
+		KeyLabelBirthday:      "Birthday",
+		KeyLabelDeathday:      "Deathday",
+		KeyLabelPlaceOfBirth:  "Place of Birth",
+		KeyLabelPlaceOfDeath:  "Place of Death",
+		KeyLabelKnownFor:      "Known for",
+		KeyLabelDepartment:    "Department",
 		KeySectionPlot:        "Plot",
 		KeySectionCast:        "Cast",
 		KeySectionSeasons:      "Seasons",
 		KeySectionLinks:       "Links",
+		KeySectionKnownFor:    "Known For",
 		KeyNoMoviesFound:      "No movies found for: %s",
 		KeyNoSeriesFound:      "No series found for: %s",
+		KeyNoPersonsFound:     "No persons found for: %s",
 		KeySelectMovie:        "Select a movie",
 		KeySelectSeries:       "Select a series",
+		KeySelectPerson:       "Select a person",
 		KeySelectAction:       "select",
 		KeyCancelAction:       "cancel",
 		KeyErrorNoAPIKey:     "Error: TMDB_API_KEY not set",
@@ -104,6 +134,7 @@ var translations = map[string]map[string]string{
 	"fr-FR": {
 		KeyMovieIcon:          "🎬",
 		KeySeriesIcon:         "📺",
+		KeyPersonIcon:         "👤",
 		KeyLabelYear:          "Année",
 		KeyLabelRuntime:       "Durée",
 		KeyLabelGenre:         "Genre",
@@ -118,14 +149,23 @@ var translations = map[string]map[string]string{
 		KeyLabelEpisodeLength: "Durée épisode",
 		KeyLabelNetwork:       "Réseau",
 		KeyLabelCreatedBy:     "Créé par",
+		KeyLabelBirthday:      "Date de naissance",
+		KeyLabelDeathday:      "Date de décès",
+		KeyLabelPlaceOfBirth:  "Lieu de naissance",
+		KeyLabelPlaceOfDeath:  "Lieu de décès",
+		KeyLabelKnownFor:      "Connu pour",
+		KeyLabelDepartment:    "Département",
 		KeySectionPlot:        "Intrigue",
 		KeySectionCast:        "Distribution",
 		KeySectionSeasons:      "Saisons",
 		KeySectionLinks:       "Liens",
+		KeySectionKnownFor:    "Rôles connus",
 		KeyNoMoviesFound:      "Aucun film trouvé pour: %s",
 		KeyNoSeriesFound:      "Aucune série trouvée pour: %s",
+		KeyNoPersonsFound:     "Aucune personne trouvée pour: %s",
 		KeySelectMovie:        "Sélectionnez un film",
 		KeySelectSeries:       "Sélectionnez une série",
+		KeySelectPerson:       "Sélectionnez une personne",
 		KeySelectAction:       "sélectionner",
 		KeyCancelAction:       "annuler",
 		KeyErrorNoAPIKey:     "Erreur: TMDB_API_KEY non défini",
@@ -135,6 +175,7 @@ var translations = map[string]map[string]string{
 	"es-ES": {
 		KeyMovieIcon:          "🎬",
 		KeySeriesIcon:         "📺",
+		KeyPersonIcon:         "👤",
 		KeyLabelYear:          "Año",
 		KeyLabelRuntime:       "Duración",
 		KeyLabelGenre:         "Género",
@@ -149,14 +190,23 @@ var translations = map[string]map[string]string{
 		KeyLabelEpisodeLength: "Duración episodio",
 		KeyLabelNetwork:       "Red",
 		KeyLabelCreatedBy:     "Creado por",
+		KeyLabelBirthday:      "Fecha de nacimiento",
+		KeyLabelDeathday:      "Fecha de fallecimiento",
+		KeyLabelPlaceOfBirth:  "Lugar de nacimiento",
+		KeyLabelPlaceOfDeath:  "Lugar de fallecimiento",
+		KeyLabelKnownFor:      "Conocido por",
+		KeyLabelDepartment:    "Departamento",
 		KeySectionPlot:        "Trama",
 		KeySectionCast:        "Reparto",
 		KeySectionSeasons:      "Temporadas",
 		KeySectionLinks:       "Enlaces",
+		KeySectionKnownFor:    "Roles conocidos",
 		KeyNoMoviesFound:      "No se encontraron películas para: %s",
 		KeyNoSeriesFound:      "No se encontraron series para: %s",
+		KeyNoPersonsFound:     "No se encontraron personas para: %s",
 		KeySelectMovie:        "Selecciona una película",
 		KeySelectSeries:       "Selecciona una serie",
+		KeySelectPerson:       "Selecciona una persona",
 		KeySelectAction:       "seleccionar",
 		KeyCancelAction:       "cancelar",
 		KeyErrorNoAPIKey:     "Error: TMDB_API_KEY no configurada",
@@ -166,6 +216,7 @@ var translations = map[string]map[string]string{
 	"it-IT": {
 		KeyMovieIcon:          "🎬",
 		KeySeriesIcon:         "📺",
+		KeyPersonIcon:         "👤",
 		KeyLabelYear:          "Anno",
 		KeyLabelRuntime:       "Durata",
 		KeyLabelGenre:         "Genere",
@@ -180,14 +231,23 @@ var translations = map[string]map[string]string{
 		KeyLabelEpisodeLength: "Durata episodio",
 		KeyLabelNetwork:       "Rete",
 		KeyLabelCreatedBy:     "Creato da",
+		KeyLabelBirthday:      "Data di nascita",
+		KeyLabelDeathday:      "Data di morte",
+		KeyLabelPlaceOfBirth:  "Luogo di nascita",
+		KeyLabelPlaceOfDeath:  "Luogo di morte",
+		KeyLabelKnownFor:      "Conosciuto per",
+		KeyLabelDepartment:    "Dipartimento",
 		KeySectionPlot:        "Trama",
 		KeySectionCast:        "Cast",
 		KeySectionSeasons:      "Stagioni",
 		KeySectionLinks:       "Collegamenti",
+		KeySectionKnownFor:    "Ruoli conosciuti",
 		KeyNoMoviesFound:      "Nessun film trovato per: %s",
 		KeyNoSeriesFound:      "Nessuna serie trovata per: %s",
+		KeyNoPersonsFound:     "Nessuna persona trovata per: %s",
 		KeySelectMovie:        "Seleziona un film",
 		KeySelectSeries:       "Seleziona una serie",
+		KeySelectPerson:       "Seleziona una persona",
 		KeySelectAction:       "seleziona",
 		KeyCancelAction:       "annulla",
 		KeyErrorNoAPIKey:     "Errore: TMDB_API_KEY non impostata",

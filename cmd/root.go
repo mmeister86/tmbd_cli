@@ -25,11 +25,12 @@ var rootCmd = &cobra.Command{
 	Use:   "tmdb",
 	Short: "CLI Tool für TMDB Film- und Serieninformationen",
 	Long: `tmdb ist ein Command-Line Tool zum Abrufen von Informationen
-über Filme und Serien von The Movie Database (TMDB).
+über Filme, Serien und Personen von The Movie Database (TMDB).
 
 Beispiele:
   tmdb movie "The Matrix"
   tmdb series "Breaking Bad"
+  tmdb person "Tom Hanks"
   tmdb m "Inception" --short
   tmdb tv "Dark" --json`,
 	Version: Version,
@@ -52,6 +53,7 @@ func init() {
 	// Subcommands hinzufügen
 	rootCmd.AddCommand(movieCmd)
 	rootCmd.AddCommand(seriesCmd)
+	rootCmd.AddCommand(personCmd)
 	rootCmd.AddCommand(languageCmd)
 }
 
