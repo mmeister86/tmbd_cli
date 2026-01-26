@@ -1,15 +1,16 @@
 # TMDB CLI
 
-Ein plattformübergreifendes Command-Line Tool zum Abrufen von Film- und Serieninformationen von [The Movie Database (TMDB)](https://www.themoviedb.org/).
+Ein plattformübergreifendes Command-Line Tool zum Abrufen von Film-, Serien- und Personeninformationen von [The Movie Database (TMDB)](https://www.themoviedb.org/).
 
 ## Features
 
 - 🎬 Suche nach Filmen mit detaillierten Informationen
 - 📺 Suche nach Serien mit Staffelübersicht
+- 👤 Suche nach Personen (Schauspieler, Regisseure) mit Filmografie
 - 🎨 Ansprechende, farbige Terminal-Ausgabe
 - 📋 Interaktive Auswahlliste bei mehreren Ergebnissen
 - 📄 JSON-Ausgabe für Skript-Integration
-- 🌍 Mehrsprachige Unterstützung
+- 🌍 Mehrsprachige Unterstützung (5 Sprachen)
 
 ## Installation
 
@@ -75,16 +76,6 @@ tmdb m "Inception"
 tmdb film "Pulp Fiction"
 ```
 
-### Sprache konfigurieren
-
-```bash
-# Sprachauswahlliste anzeigen
-tmdb language
-
-# Sprache für einzelne Anfrage überschreiben
-tmdb movie "The Matrix" --language en-US
-```
-
 ### Serien suchen
 
 ```bash
@@ -92,6 +83,14 @@ tmdb series "Breaking Bad"
 tmdb s "Dark"
 tmdb tv "The Office"
 tmdb show "Stranger Things"
+```
+
+### Personen suchen
+
+```bash
+tmdb person "Tom Hanks"
+tmdb p "Meryl Streep"
+tmdb actor "Leonardo DiCaprio"
 ```
 
 ### Optionen
@@ -143,6 +142,12 @@ tmdb movie "Inception" --short
 
 # JSON-Ausgabe (z.B. für jq)
 tmdb movie "Fight Club" --json | jq '.rating'
+
+# Personensuche mit JSON
+tmdb person "Brad Pitt" --json | jq '.known_for_works[0].title'
+
+# Kompakte Personeninfos
+tmdb p "Meryl Streep" --short
 
 # Englische Ergebnisse
 tmdb series "Game of Thrones" --language en-US

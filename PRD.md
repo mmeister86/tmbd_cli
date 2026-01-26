@@ -1,19 +1,19 @@
 # Product Requirements Document (PRD)
 # TMDB CLI Tool
 
-**Version:** 1.0  
-**Datum:** 25. Januar 2026  
-**Status:** Draft  
+**Version:** 1.0.2  
+**Datum:** 26. Januar 2026  
+**Status:** Released  
 
 ---
 
 ## 1. Übersicht
 
 ### 1.1 Produktbeschreibung
-Ein plattformübergreifendes Command-Line Tool in Go, das Informationen über Filme und Serien von The Movie Database (TMDB) abruft und ansprechend im Terminal darstellt.
+Ein plattformübergreifendes Command-Line Tool in Go, das Informationen über Filme, Serien und Personen von The Movie Database (TMDB) abruft und ansprechend im Terminal darstellt.
 
 ### 1.2 Ziele
-- Schneller Zugriff auf Film-/Serieninformationen direkt aus dem Terminal
+- Schneller Zugriff auf Film-/Serien-/Personeninformationen direkt aus dem Terminal
 - Ansprechende, farbige Darstellung der Ergebnisse
 - Einfache Bedienung mit intuitiven Subcommands
 - Plattformübergreifende Kompatibilität (Windows, macOS, Linux)
@@ -43,8 +43,14 @@ tmdb-cli/
 ├── cmd/
 │   ├── root.go          # Haupt-Command, globale Flags
 │   ├── movie.go         # Movie Subcommand
-│   └── series.go        # Series Subcommand
+│   ├── series.go        # Series Subcommand
+│   ├── person.go        # Person Subcommand
+│   └── language.go      # Language Subcommand
 ├── internal/
+│   ├── config/
+│   │   └── config.go    # Konfigurationsverwaltung
+│   ├── i18n/
+│   │   └── i18n.go      # Internationalisierung
 │   ├── tmdb/
 │   │   ├── client.go    # HTTP Client, API Requests
 │   │   └── types.go     # API Response Types
@@ -277,6 +283,91 @@ tmdb s "Dark"
 
 ---
 
+#### 3.1.4 Person Command
+```bash
+tmdb person <suchbegriff> [flags]
+```
+
+**Aliases:** `p`, `actor`
+
+**Beschreibung:** Sucht nach einer Person und zeigt detaillierte Informationen an.
+
+**Beispiele:**
+```bash
+tmdb person "Tom Hanks"
+tmdb person "Meryl Streep" --short
+tmdb person "Leonardo DiCaprio" --json
+tmdb p "Brad Pitt"
+```
+
+**Verhalten:** Analog zu Movie/Series Command.
+
+**Ausgabe (Standard):**
+```
+╭──────────────────────────────────────────────────────────────╮
+│ 👤 Tom Hanks                                                 │
+│                                                              │
+│ Geburtstag     9. Juli 1956                                  │
+│ Geburtsort     Concord, California, USA                      │
+│ Beruf          Acting                                        │
+│                                                              │
+│ ─── Biografie ────────────────────────────────────────────   │
+│ Thomas Jeffrey Hanks ist ein US-amerikanischer              │
+│ Schauspieler und Filmproduzent...                           │
+│                                                              │
+│ ─── Bekannt für ──────────────────────────────────────────   │
+│ 🎬 Forrest Gump als Forrest Gump (1994)                     │
+│ 🎬 Cast Away als Chuck Noland (2000)                        │
+│ 🎬 The Green Mile als Paul Edgecomb (1999)                  │
+│ 🎬 Saving Private Ryan als Captain Miller (1998)            │
+│ ...                                                          │
+│                                                              │
+│ ─── Links ──────────────────────────────────────────────     │
+│ IMDb: https://www.imdb.com/name/nm0000158                   │
+╰──────────────────────────────────────────────────────────────╯
+```
+
+**Ausgabe (--short):**
+```
+╭──────────────────────────────────────────────────────────────╮
+│ 👤 Tom Hanks                                                 │
+│ 9. Juli 1956 • Acting                                        │
+│                                                              │
+│ Thomas Jeffrey Hanks ist ein US-amerikanischer...           │
+╰──────────────────────────────────────────────────────────────╯
+```
+
+**Ausgabe (--json):**
+```json
+{
+  "id": 31,
+  "name": "Tom Hanks",
+  "birthday": "1956-07-09",
+  "deathday": "",
+  "place_of_birth": "Concord, California, USA",
+  "known_for": "Acting",
+  "biography": "Thomas Jeffrey Hanks ist...",
+  "known_for_works": [
+    {"title": "Forrest Gump", "original_title": "Forrest Gump", "year": "1994", "media_type": "movie"},
+    {"title": "Cast Away", "original_title": "Cast Away", "year": "2000", "media_type": "movie"}
+  ],
+  "imdb_id": "nm0000158",
+  "imdb_url": "https://www.imdb.com/name/nm0000158",
+  "profile_url": "https://image.tmdb.org/t/p/w500/..."
+}
+```
+
+**Personen-spezifische Felder:**
+- Geburtsdatum (formatiert je nach Sprache)
+- Sterbedatum (falls verstorben)
+- Geburtsort
+- Beruf/Department
+- Biografie
+- Bekannte Rollen/Werke (sortiert nach Popularität)
+- IMDb-Link
+
+---
+
 ### 3.2 Interaktive Auswahl
 
 Bei mehreren Suchergebnissen wird eine interaktive Liste angezeigt:
@@ -340,8 +431,10 @@ API Key erhältst du unter:
 |----------|------------|
 | `GET /search/movie` | Film-Suche |
 | `GET /search/tv` | Serien-Suche |
+| `GET /search/person` | Personen-Suche |
 | `GET /movie/{id}` | Film-Details |
 | `GET /tv/{id}` | Serien-Details |
+| `GET /person/{id}` | Personen-Details |
 
 ### 4.2 Query Parameter
 
@@ -372,6 +465,16 @@ GET https://api.themoviedb.org/3/search/tv?api_key=XXX&language=de-DE&query=Brea
 **Serien-Details:**
 ```
 GET https://api.themoviedb.org/3/tv/1396?api_key=XXX&language=de-DE&append_to_response=credits
+```
+
+**Personen-Suche:**
+```
+GET https://api.themoviedb.org/3/search/person?api_key=XXX&language=de-DE&query=Tom+Hanks
+```
+
+**Personen-Details:**
+```
+GET https://api.themoviedb.org/3/person/31?api_key=XXX&language=de-DE&append_to_response=combined_credits
 ```
 
 ---
@@ -471,6 +574,52 @@ type Season struct {
 }
 ```
 
+### 5.3 Person Response (vereinfacht)
+
+```go
+type PersonSearchResult struct {
+    ID          int             `json:"id"`
+    Name        string          `json:"name"`
+    ProfilePath string          `json:"profile_path"`
+    Adult       bool            `json:"adult"`
+    KnownFor    []KnownForWork  `json:"known_for"`
+    Popularity  float64         `json:"popularity"`
+}
+
+type PersonDetails struct {
+    ID                 int               `json:"id"`
+    Name               string            `json:"name"`
+    Birthday           string            `json:"birthday"`
+    Deathday           string            `json:"deathday"`
+    Gender             int               `json:"gender"`
+    PlaceOfBirth       string            `json:"place_of_birth"`
+    AlsoKnownAs        []string          `json:"also_known_as"`
+    Biography          string            `json:"biography"`
+    Popularity         float64           `json:"popularity"`
+    KnownForDepartment string            `json:"known_for_department"`
+    ProfilePath        string            `json:"profile_path"`
+    IMDBID             string            `json:"imdb_id"`
+    CombinedCredits    *CombinedCredits  `json:"combined_credits,omitempty"`
+}
+
+type CombinedCredits struct {
+    Cast []CombinedCast `json:"cast"`
+    Crew []CombinedCrew `json:"crew"`
+}
+
+type CombinedCast struct {
+    ID            int     `json:"id"`
+    Title         string  `json:"title"`
+    Name          string  `json:"name"`
+    MediaType     string  `json:"media_type"`
+    Character     string  `json:"character"`
+    ReleaseDate   string  `json:"release_date"`
+    FirstAirDate  string  `json:"first_air_date"`
+    VoteAverage   float64 `json:"vote_average"`
+    Popularity    float64 `json:"popularity"`
+}
+```
+
 ---
 
 ## 6. UI/UX Design
@@ -514,6 +663,8 @@ Sprachpriorität:
 |---------|------|
 | Film | 🎬 |
 | Serie | 📺 |
+| Person | 👤 |
+| Sprache | 🌍 |
 | Suche | 🔍 |
 | Fehler | ❌ |
 | Info | ℹ️ |
@@ -603,7 +754,6 @@ sudo mv tmdb /usr/local/bin/
 | Feature | Priorität | Beschreibung |
 |---------|-----------|--------------|
 | Caching | Hoch | Suchergebnisse lokal cachen |
-| Person Search | Mittel | `tmdb person "Tom Hanks"` |
 | Watchlist | Mittel | Lokale Merkliste |
 | Poster ASCII | Niedrig | Poster als ASCII-Art anzeigen |
 | Similar/Recommendations | Niedrig | Ähnliche Filme/Serien vorschlagen |
@@ -667,8 +817,22 @@ $ tmdb movie "matrix"
 $ tmdb series "dark" --short
 # → Zeigt kompakte Info zu "Dark"
 
+$ tmdb person "tom hanks"
+# → Zeigt detaillierte Infos zu Tom Hanks
+
+$ tmdb p "meryl streep" --short
+# → Zeigt kompakte Info zu Meryl Streep
+
 $ tmdb movie "inception" --json | jq '.rating'
 8.4
+
+$ tmdb person "brad pitt" --json | jq '.known_for_works[0].title'
+"Fight Club"
+
+$ tmdb language
+# → Zeigt interaktive Sprachauswahl
+# → User wählt "English"
+# → Sprache wird in Config gespeichert
 
 $ tmdb m "nicht existierender film"
 ℹ️ Keine Filme gefunden für: nicht existierender film
