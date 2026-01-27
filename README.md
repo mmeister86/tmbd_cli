@@ -22,7 +22,13 @@ Ein plattformübergreifendes Command-Line Tool zum Abrufen von Film-, Serien- un
 ### Via Go
 
 ```bash
-go install github.com/mmeister86/tmbd_cli@latest
+go install github.com/mmeister86/tmbd_cli/cmd/tmdb@latest
+```
+
+**Wichtig:** Stelle sicher, dass `$GOPATH/bin` (meistens `~/go/bin`) in deinem PATH ist:
+
+```bash
+export PATH="$HOME/go/bin:$PATH"
 ```
 
 ### Manuell bauen
