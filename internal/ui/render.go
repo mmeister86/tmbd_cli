@@ -179,6 +179,43 @@ func RenderTVDetails(tv *tmdb.TVDetails, short bool, language string) string {
 	return renderTVFull(tv, language)
 }
 
+// RenderSeasonDetails rendert Staffeldetails inklusive Episoden.
+func RenderSeasonDetails(season *tmdb.SeasonDetails, language string) string {
+	var sb strings.Builder
+
+	sb.WriteString(titleStyle.Render(fmt.Sprintf("📺 %s", season.Name)))
+	sb.WriteString("\n\n")
+
+	if season.AirDate != "" {
+		sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelYear, language), extractYear(season.AirDate)))
+	}
+	sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelEpisodes, language), fmt.Sprintf("%d", len(season.Episodes))))
+	if season.VoteAverage > 0 {
+		sb.WriteString(renderRow(i18n.Translate(i18n.KeyLabelRating, language), formatRatingCompact(season.VoteAverage)))
+	}
+	sb.WriteString("\n")
+
+	if season.Overview != "" {
+		sb.WriteString(renderSection(i18n.Translate(i18n.KeySectionPlot, language)))
+		sb.WriteString(wrapText(season.Overview, 60))
+		sb.WriteString("\n\n")
+	}
+
+	if len(season.Episodes) > 0 {
+		sb.WriteString(renderSection(i18n.Translate(i18n.KeyLabelEpisodes, language)))
+		for _, episode := range season.Episodes {
+			line := fmt.Sprintf("%d. %s", episode.EpisodeNumber, episode.Name)
+			if episode.VoteAverage > 0 {
+				line = fmt.Sprintf("%s - %.1f/10", line, episode.VoteAverage)
+			}
+			sb.WriteString(line)
+			sb.WriteString("\n")
+		}
+	}
+
+	return boxStyle.Render(strings.TrimRight(sb.String(), "\n"))
+}
+
 func renderTVFull(tv *tmdb.TVDetails, language string) string {
 	var sb strings.Builder
 

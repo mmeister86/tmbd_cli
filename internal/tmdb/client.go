@@ -163,6 +163,32 @@ func (c *Client) GetTVDetails(id int, language string) (*TVDetails, error) {
 	return &tv, nil
 }
 
+// GetTVSeasonDetails lädt die Details zu einer Serien-Staffel
+func (c *Client) GetTVSeasonDetails(tvID int, seasonNumber int, language string) (*SeasonDetails, error) {
+	endpoint := fmt.Sprintf("%s/tv/%d/season/%d", baseURL, tvID, seasonNumber)
+
+	params := url.Values{}
+	params.Set("api_key", c.apiKey)
+	params.Set("language", language)
+
+	resp, err := c.httpClient.Get(fmt.Sprintf("%s?%s", endpoint, params.Encode()))
+	if err != nil {
+		return nil, fmt.Errorf("API-Anfrage fehlgeschlagen: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("%w: Status %d", ErrAPIError, resp.StatusCode)
+	}
+
+	var season SeasonDetails
+	if err := json.NewDecoder(resp.Body).Decode(&season); err != nil {
+		return nil, fmt.Errorf("JSON-Dekodierung fehlgeschlagen: %w", err)
+	}
+
+	return &season, nil
+}
+
 // SearchPeople sucht nach Personen
 func (c *Client) SearchPeople(query string, language string) ([]PersonSearchResult, error) {
 	endpoint := fmt.Sprintf("%s/search/person", baseURL)

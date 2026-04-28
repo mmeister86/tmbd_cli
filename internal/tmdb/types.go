@@ -134,6 +134,31 @@ type Season struct {
 	PosterPath   string `json:"poster_path"`
 }
 
+// SeasonDetails enthält Details und Episoden einer TV-Staffel
+type SeasonDetails struct {
+	ID           int       `json:"id"`
+	Name         string    `json:"name"`
+	Overview     string    `json:"overview"`
+	AirDate      string    `json:"air_date"`
+	SeasonNumber int       `json:"season_number"`
+	PosterPath   string    `json:"poster_path"`
+	VoteAverage  float64   `json:"vote_average"`
+	Episodes     []Episode `json:"episodes"`
+}
+
+// Episode repräsentiert eine Episode innerhalb einer Staffel
+type Episode struct {
+	ID            int     `json:"id"`
+	Name          string  `json:"name"`
+	Overview      string  `json:"overview"`
+	AirDate       string  `json:"air_date"`
+	EpisodeNumber int     `json:"episode_number"`
+	SeasonNumber  int     `json:"season_number"`
+	Runtime       int     `json:"runtime"`
+	VoteAverage   float64 `json:"vote_average"`
+	VoteCount     int     `json:"vote_count"`
+}
+
 // MovieJSONOutput ist das Format für die JSON-Ausgabe von Filmen
 type MovieJSONOutput struct {
 	ID            int          `json:"id"`
@@ -182,107 +207,107 @@ type CastOutput struct {
 
 // PersonSearchResult repräsentiert ein Suchergebnis für Personen
 type PersonSearchResult struct {
-	ID          int             `json:"id"`
-	Name        string          `json:"name"`
-	ProfilePath string          `json:"profile_path"`
-	Adult       bool            `json:"adult"`
-	KnownFor    []KnownForWork  `json:"known_for"`
-	Popularity  float64         `json:"popularity"`
+	ID          int            `json:"id"`
+	Name        string         `json:"name"`
+	ProfilePath string         `json:"profile_path"`
+	Adult       bool           `json:"adult"`
+	KnownFor    []KnownForWork `json:"known_for"`
+	Popularity  float64        `json:"popularity"`
 }
 
 // KnownForWork repräsentiert bekannte Werke einer Person
 type KnownForWork struct {
-	ID          int     `json:"id"`
+	ID            int     `json:"id"`
 	OriginalTitle string  `json:"original_title"`
-	Title       string  `json:"title"`
-	ReleaseDate string  `json:"release_date"`
-	FirstAirDate string `json:"first_air_date"`
-	OriginalName string  `json:"original_name"`
-	Name        string  `json:"name"`
-	MediaType   string  `json:"media_type"`
-	VoteAverage float64 `json:"vote_average"`
-	VoteCount   int     `json:"vote_count"`
+	Title         string  `json:"title"`
+	ReleaseDate   string  `json:"release_date"`
+	FirstAirDate  string  `json:"first_air_date"`
+	OriginalName  string  `json:"original_name"`
+	Name          string  `json:"name"`
+	MediaType     string  `json:"media_type"`
+	VoteAverage   float64 `json:"vote_average"`
+	VoteCount     int     `json:"vote_count"`
 }
 
 // PersonDetails enthält alle Details zu einer Person
 type PersonDetails struct {
-	ID              int               `json:"id"`
-	Name            string            `json:"name"`
-	Birthday        string            `json:"birthday"`
-	Deathday        string            `json:"deathday"`
-	Gender          int               `json:"gender"`
-	PlaceOfBirth    string            `json:"place_of_birth"`
-	AlsoKnownAs     []string          `json:"also_known_as"`
-	Biography       string            `json:"biography"`
-	Popularity      float64           `json:"popularity"`
-	KnownForDepartment string          `json:"known_for_department"`
-	ProfilePath     string            `json:"profile_path"`
-	Adult           bool              `json:"adult"`
-	IMDBID          string            `json:"imdb_id"`
-	Homepage        string            `json:"homepage"`
-	CombinedCredits *CombinedCredits  `json:"combined_credits,omitempty"`
+	ID                 int              `json:"id"`
+	Name               string           `json:"name"`
+	Birthday           string           `json:"birthday"`
+	Deathday           string           `json:"deathday"`
+	Gender             int              `json:"gender"`
+	PlaceOfBirth       string           `json:"place_of_birth"`
+	AlsoKnownAs        []string         `json:"also_known_as"`
+	Biography          string           `json:"biography"`
+	Popularity         float64          `json:"popularity"`
+	KnownForDepartment string           `json:"known_for_department"`
+	ProfilePath        string           `json:"profile_path"`
+	Adult              bool             `json:"adult"`
+	IMDBID             string           `json:"imdb_id"`
+	Homepage           string           `json:"homepage"`
+	CombinedCredits    *CombinedCredits `json:"combined_credits,omitempty"`
 }
 
 // CombinedCredits enthält die kombinierte Filmografie einer Person
 type CombinedCredits struct {
-	ID   int               `json:"id"`
-	Cast []CombinedCast    `json:"cast"`
-	Crew []CombinedCrew    `json:"crew"`
+	ID   int            `json:"id"`
+	Cast []CombinedCast `json:"cast"`
+	Crew []CombinedCrew `json:"crew"`
 }
 
 // CombinedCast repräsentiert einen Cast-Eintrag in der kombinierten Filmografie
 type CombinedCast struct {
-	ID               int     `json:"id"`
-	OriginalTitle    string  `json:"original_title"`
-	Title            string  `json:"title"`
-	ReleaseDate      string  `json:"release_date"`
-	FirstAirDate     string  `json:"first_air_date"`
-	OriginalName     string  `json:"original_name"`
-	Name             string  `json:"name"`
-	MediaType        string  `json:"media_type"`
-	VoteAverage      float64 `json:"vote_average"`
-	VoteCount        int     `json:"vote_count"`
-	Character        string  `json:"character"`
-	Order            int     `json:"order"`
-	Popularity       float64 `json:"popularity"`
+	ID            int     `json:"id"`
+	OriginalTitle string  `json:"original_title"`
+	Title         string  `json:"title"`
+	ReleaseDate   string  `json:"release_date"`
+	FirstAirDate  string  `json:"first_air_date"`
+	OriginalName  string  `json:"original_name"`
+	Name          string  `json:"name"`
+	MediaType     string  `json:"media_type"`
+	VoteAverage   float64 `json:"vote_average"`
+	VoteCount     int     `json:"vote_count"`
+	Character     string  `json:"character"`
+	Order         int     `json:"order"`
+	Popularity    float64 `json:"popularity"`
 }
 
 // CombinedCrew repräsentiert einen Crew-Eintrag in der kombinierten Filmografie
 type CombinedCrew struct {
-	ID               int     `json:"id"`
-	OriginalTitle    string  `json:"original_title"`
-	Title            string  `json:"title"`
-	ReleaseDate      string  `json:"release_date"`
-	FirstAirDate     string  `json:"first_air_date"`
-	OriginalName     string  `json:"original_name"`
-	Name             string  `json:"name"`
-	MediaType        string  `json:"media_type"`
-	VoteAverage      float64 `json:"vote_average"`
-	VoteCount        int     `json:"vote_count"`
-	Department       string  `json:"department"`
-	Job              string  `json:"job"`
-	Popularity       float64 `json:"popularity"`
+	ID            int     `json:"id"`
+	OriginalTitle string  `json:"original_title"`
+	Title         string  `json:"title"`
+	ReleaseDate   string  `json:"release_date"`
+	FirstAirDate  string  `json:"first_air_date"`
+	OriginalName  string  `json:"original_name"`
+	Name          string  `json:"name"`
+	MediaType     string  `json:"media_type"`
+	VoteAverage   float64 `json:"vote_average"`
+	VoteCount     int     `json:"vote_count"`
+	Department    string  `json:"department"`
+	Job           string  `json:"job"`
+	Popularity    float64 `json:"popularity"`
 }
 
 // PersonJSONOutput ist das Format für die JSON-Ausgabe von Personen
 type PersonJSONOutput struct {
-	ID               int            `json:"id"`
-	Name             string         `json:"name"`
-	Birthday         string         `json:"birthday"`
-	Deathday         string         `json:"deathday"`
-	PlaceOfBirth     string         `json:"place_of_birth"`
-	KnownFor         string         `json:"known_for"`
-	Biography        string         `json:"biography"`
-	KnownForWorks    []KnownForWorkOutput `json:"known_for_works"`
-	IMDBID           string         `json:"imdb_id"`
-	IMDBURL          string         `json:"imdb_url"`
-	ProfileURL       string         `json:"profile_url"`
+	ID            int                  `json:"id"`
+	Name          string               `json:"name"`
+	Birthday      string               `json:"birthday"`
+	Deathday      string               `json:"deathday"`
+	PlaceOfBirth  string               `json:"place_of_birth"`
+	KnownFor      string               `json:"known_for"`
+	Biography     string               `json:"biography"`
+	KnownForWorks []KnownForWorkOutput `json:"known_for_works"`
+	IMDBID        string               `json:"imdb_id"`
+	IMDBURL       string               `json:"imdb_url"`
+	ProfileURL    string               `json:"profile_url"`
 }
 
 // KnownForWorkOutput ist das Format für bekannte Werke in der JSON-Ausgabe
 type KnownForWorkOutput struct {
-	Title       string `json:"title"`
+	Title         string `json:"title"`
 	OriginalTitle string `json:"original_title"`
-	Year        string `json:"year"`
-	MediaType   string `json:"media_type"`
+	Year          string `json:"year"`
+	MediaType     string `json:"media_type"`
 }

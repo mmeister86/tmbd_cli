@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/mmeister86/tmbd_cli/internal/i18n"
 	"github.com/mmeister86/tmbd_cli/internal/tmdb"
@@ -59,14 +60,11 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 		return
 	}
 
-	// Titel mit Jahr und Rating
-	title := fmt.Sprintf("%s (%s) ★ %.1f", item.title, item.year, item.rating)
+	title := formatSearchItemTitle(item)
 
 	// Beschreibung kürzen
 	desc := item.overview
-	if len(desc) > 60 {
-		desc = desc[:57] + "..."
-	}
+	desc = truncateText(desc, 60)
 
 	var str string
 	if index == m.Index() {
@@ -83,6 +81,17 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 	}
 
 	fmt.Fprint(w, str)
+}
+
+func formatSearchItemTitle(item searchItem) string {
+	title := item.title
+	if item.year != "" {
+		title = fmt.Sprintf("%s (%s)", title, item.year)
+	}
+	if item.rating > 0 {
+		title = fmt.Sprintf("%s ★ %.1f", title, item.rating)
+	}
+	return title
 }
 
 // selectModel ist das Bubble Tea Model für die Auswahl
@@ -235,6 +244,77 @@ func runSelect(items []list.Item, title string) (int, error) {
 	}
 
 	return result.choice, nil
+}
+
+func runOptionSelect(items []list.Item, title string) (int, error) {
+	return runSelect(items, title)
+}
+
+// SelectAction zeigt eine interaktive Auswahl für Drill-down-Aktionen.
+func SelectAction(options []DrillDownOption, title string) (string, error) {
+	items := make([]list.Item, len(options))
+	for i, option := range options {
+		id, err := strconv.Atoi(option.ID)
+		if err != nil {
+			id = i + 1
+		}
+		items[i] = searchItem{
+			id:       id,
+			title:    option.Title,
+			year:     "",
+			rating:   0,
+			overview: option.Description,
+		}
+	}
+
+	selected, err := runOptionSelect(items, title)
+	if err != nil || selected == -1 {
+		return "", err
+	}
+	for i, option := range options {
+		id, convErr := strconv.Atoi(option.ID)
+		if convErr != nil {
+			id = i + 1
+		}
+		if id == selected {
+			return option.ID, nil
+		}
+	}
+	return "", nil
+}
+
+// SelectPersonOption zeigt eine interaktive Personenauswahl.
+func SelectPersonOption(people []PersonOption, title string) (int, error) {
+	items := make([]list.Item, len(people))
+	for i, person := range people {
+		items[i] = searchItem{
+			id:       person.ID,
+			title:    person.Name,
+			year:     person.Description,
+			rating:   0,
+			overview: "",
+		}
+	}
+	return runOptionSelect(items, title)
+}
+
+// SelectSeasonOption zeigt eine interaktive Staffelauswahl.
+func SelectSeasonOption(seasons []DrillDownOption, title string) (int, error) {
+	items := make([]list.Item, len(seasons))
+	for i, season := range seasons {
+		id, err := strconv.Atoi(season.ID)
+		if err != nil {
+			continue
+		}
+		items[i] = searchItem{
+			id:       id,
+			title:    season.Title,
+			year:     "",
+			rating:   0,
+			overview: season.Description,
+		}
+	}
+	return runOptionSelect(items, title)
 }
 
 // SelectLanguage zeigt eine interaktive Auswahl für Sprachen

@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/mmeister86/tmbd_cli/internal/i18n"
@@ -94,7 +95,56 @@ func runMovie(cmd *cobra.Command, args []string) error {
 		fmt.Println(output)
 	} else {
 		fmt.Println(ui.RenderMovieDetails(movie, shortOutput, lang))
+		if !shortOutput {
+			if err := ui.WaitForEnter(os.Stdin, os.Stdout, "Enter drücken, um weitere Optionen anzuzeigen..."); err != nil {
+				return err
+			}
+			return runMovieDrillDown(client, movie, lang)
+		}
 	}
 
 	return nil
+}
+
+func runMovieDrillDown(client *tmdb.Client, movie *tmdb.MovieDetails, lang string) error {
+	for {
+		action, err := ui.SelectAction(ui.MovieDrillDownActions(movie, lang), "Weitere Informationen")
+		if err != nil {
+			return fmt.Errorf("Auswahl fehlgeschlagen: %w", err)
+		}
+		switch action {
+		case "", ui.ActionExit:
+			return nil
+		case ui.ActionCast:
+			if err := renderSelectedPerson(client, ui.PeopleFromCast(movie.Credits.Cast), "Besetzung", lang); err != nil {
+				return err
+			}
+		case ui.ActionDirectors:
+			if err := renderSelectedPerson(client, ui.PeopleFromCrew(movie.Credits.Crew, "Director"), "Regie", lang); err != nil {
+				return err
+			}
+		}
+	}
+}
+
+func renderSelectedPerson(client *tmdb.Client, people []ui.PersonOption, title string, lang string) error {
+	if len(people) == 0 {
+		fmt.Println(ui.RenderInfo("Keine Personen verfügbar"))
+		return nil
+	}
+
+	personID, err := ui.SelectPersonOption(people, title)
+	if err != nil {
+		return fmt.Errorf("Personenauswahl fehlgeschlagen: %w", err)
+	}
+	if personID == -1 {
+		return nil
+	}
+
+	person, err := client.GetPersonDetails(personID, lang)
+	if err != nil {
+		return fmt.Errorf("Personendetails konnten nicht geladen werden: %w", err)
+	}
+	fmt.Println(ui.RenderPersonDetails(person, false, lang))
+	return ui.WaitForEnter(os.Stdin, os.Stdout, "Enter drücken, um zum Menü zurückzukehren...")
 }
