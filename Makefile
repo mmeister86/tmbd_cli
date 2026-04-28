@@ -1,26 +1,30 @@
 BINARY_NAME=tmdb
-VERSION=1.0.0
+VERSION=1.0.2
+VERSION_LDFLAGS=-X github.com/mmeister86/tmbd_cli/cmd.Version=$(VERSION)
+INSTALL_DIR=/usr/local/bin
+SUDO=sudo
 
 .PHONY: all build clean install test build-all
 
 all: build
 
 build:
-	go build -ldflags "-X main.Version=$(VERSION)" -o $(BINARY_NAME) .
+	go build -ldflags "$(VERSION_LDFLAGS)" -o $(BINARY_NAME) .
 
 build-all:
 	@mkdir -p dist
-	GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.Version=$(VERSION)" -o dist/$(BINARY_NAME)-darwin-amd64 .
-	GOOS=darwin GOARCH=arm64 go build -ldflags "-X main.Version=$(VERSION)" -o dist/$(BINARY_NAME)-darwin-arm64 .
-	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=$(VERSION)" -o dist/$(BINARY_NAME)-linux-amd64 .
-	GOOS=linux GOARCH=arm64 go build -ldflags "-X main.Version=$(VERSION)" -o dist/$(BINARY_NAME)-linux-arm64 .
-	GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=$(VERSION)" -o dist/$(BINARY_NAME)-windows-amd64.exe .
+	GOOS=darwin GOARCH=amd64 go build -ldflags "$(VERSION_LDFLAGS)" -o dist/$(BINARY_NAME)-darwin-amd64 .
+	GOOS=darwin GOARCH=arm64 go build -ldflags "$(VERSION_LDFLAGS)" -o dist/$(BINARY_NAME)-darwin-arm64 .
+	GOOS=linux GOARCH=amd64 go build -ldflags "$(VERSION_LDFLAGS)" -o dist/$(BINARY_NAME)-linux-amd64 .
+	GOOS=linux GOARCH=arm64 go build -ldflags "$(VERSION_LDFLAGS)" -o dist/$(BINARY_NAME)-linux-arm64 .
+	GOOS=windows GOARCH=amd64 go build -ldflags "$(VERSION_LDFLAGS)" -o dist/$(BINARY_NAME)-windows-amd64.exe .
 
 install: build
-	sudo mv $(BINARY_NAME) /usr/local/bin/
+	$(SUDO) mkdir -p $(INSTALL_DIR)
+	$(SUDO) mv $(BINARY_NAME) $(INSTALL_DIR)/$(BINARY_NAME)
 
 uninstall:
-	sudo rm -f /usr/local/bin/$(BINARY_NAME)
+	$(SUDO) rm -f $(INSTALL_DIR)/$(BINARY_NAME)
 
 clean:
 	rm -f $(BINARY_NAME)

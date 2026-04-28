@@ -504,7 +504,9 @@ func wrapText(text string, width int) string {
 
 	for _, word := range words {
 		if len(currentLine)+len(word)+1 > width {
-			lines = append(lines, currentLine)
+			if currentLine != "" {
+				lines = append(lines, currentLine)
+			}
 			currentLine = word
 		} else {
 			if currentLine != "" {
@@ -521,10 +523,19 @@ func wrapText(text string, width int) string {
 }
 
 func truncateText(text string, maxLen int) string {
-	if len(text) <= maxLen {
+	if maxLen <= 3 {
+		runes := []rune(text)
+		if len(runes) <= maxLen {
+			return text
+		}
+		return string(runes[:maxLen])
+	}
+
+	runes := []rune(text)
+	if len(runes) <= maxLen {
 		return text
 	}
-	return text[:maxLen-3] + "..."
+	return string(runes[:maxLen-3]) + "..."
 }
 
 // RenderPersonDetails rendert die Personendetails
@@ -675,7 +686,6 @@ func getKnownForCredits(credits *tmdb.CombinedCredits) []tmdb.CombinedCast {
 	// Alle Cast-Einträge sammeln (Priorität: Cast vor Crew)
 	var allWorks []tmdb.CombinedCast
 	allWorks = append(allWorks, credits.Cast...)
-	allWorks = append(allWorks, credits.Cast...) // Crew werden ignoriert für KnownFor
 
 	// Nach Popularität sortieren und duplikate entfernen
 	if len(allWorks) == 0 {
@@ -687,7 +697,7 @@ func getKnownForCredits(credits *tmdb.CombinedCredits) []tmdb.CombinedCast {
 		return allWorks[i].Popularity > allWorks[j].Popularity
 	})
 
-	// Begrenzen auf 10 und nach Order sortieren
+	// Begrenzen auf 10, Popularitäts-Reihenfolge beibehalten
 	result := make([]tmdb.CombinedCast, 0, 10)
 	seenIDs := make(map[int]bool)
 	for _, work := range allWorks {
@@ -699,11 +709,6 @@ func getKnownForCredits(credits *tmdb.CombinedCredits) []tmdb.CombinedCast {
 			result = append(result, work)
 		}
 	}
-
-	// Nach Order sortieren
-	sort.Slice(result, func(i, j int) bool {
-		return result[i].Order < result[j].Order
-	})
 
 	return result
 }
@@ -737,10 +742,10 @@ func formatKnownForWorkJSON(work tmdb.CombinedCast) tmdb.KnownForWorkOutput {
 	}
 
 	return tmdb.KnownForWorkOutput{
-		Title:        title,
+		Title:         title,
 		OriginalTitle: work.OriginalTitle,
-		Year:         year,
-		MediaType:    work.MediaType,
+		Year:          year,
+		MediaType:     work.MediaType,
 	}
 }
 

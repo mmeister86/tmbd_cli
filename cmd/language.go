@@ -20,10 +20,6 @@ Anfragen verwendet. Mit dem --language Flag kann die Sprache für einzelne Anfra
 	RunE: runLanguage,
 }
 
-func init() {
-	rootCmd.AddCommand(languageCmd)
-}
-
 func runLanguage(cmd *cobra.Command, args []string) error {
 	// Aktuelle Konfiguration laden
 	cfg, err := config.Load()
